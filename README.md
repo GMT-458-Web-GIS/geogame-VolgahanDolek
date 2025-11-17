@@ -17,4 +17,6 @@
 
 The game might have 2 difficulty levels with easier to know cities.
 
-İf you get the 10 questions right without losing all of your 3 lives you get a win.
+If you get the 10 questions right without losing all of your 3 lives you get a win.
+
+Game will show a point in Turkey thank ask which city does that point belong to.
