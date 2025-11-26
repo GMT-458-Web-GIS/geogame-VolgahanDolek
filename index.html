@@ -15,7 +15,7 @@
         }
         
         body {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            background: linear-gradient(135deg, #3B3BFF, #86A8E7, #5FFBF1);
             color: white;
             min-height: 100vh;
             padding: 20px;
@@ -40,6 +40,34 @@
     
 </head>
 <body>
-   
+    <div class="container">
+        <header>
+            <h1>🌍 Geo Guessing Game</h1>
+            <p class="subtitle">Test your geography knowledge.</p>
+        </header>
+        
+        <div class="game-container">
+            <div class="map-container">
+                <div id="map"></div>
+            </div>
+            
+            <div class="game-panel">
+                <!-- Game controls -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+
+        // Initializing the map
+            const map = L.map('map').setView([20, 0], 2);
+
+        // Adding tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+    </script>
 </body>
 </html>
