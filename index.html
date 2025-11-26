@@ -101,6 +101,68 @@ const gameConfig = {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
+        // Start a new round
+function startNewRound() {
+    // Reset round state
+    gameConfig.userGuess = null;
+    
+    // Clear markers from previous round
+    if (marker) map.removeLayer(marker);
+    if (targetMarker) map.removeLayer(targetMarker);
+    
+    // Select a random location
+    const locations = gameConfig.locations[gameConfig.difficulty];
+    const randomIndex = Math.floor(Math.random() * locations.length);
+    gameConfig.currentLocation = locations[randomIndex];
+    
+    // Update UI
+    questionElement.textContent = `Where is ${gameConfig.currentLocation.name}?`;
+}
+
+// Place marker on map for user's guess
+function placeMarker(latlng) {
+    if (marker) map.removeLayer(marker);
+    
+    marker = L.marker(latlng).addTo(map)
+        .bindPopup('Your guess')
+        .openPopup();
+    
+    gameConfig.userGuess = latlng;
+}
+
+// Check the user's guess
+function checkGuess() {
+    if (gameConfig.userGuess === null) return;
+    
+    const distance = calculateDistance(
+        gameConfig.currentLocation.lat, 
+        gameConfig.currentLocation.lng,
+        gameConfig.userGuess.lat, 
+        gameConfig.userGuess.lng
+    );
+    
+    // Calculate score based on distance
+    let points = calculateScore(distance);
+    
+    // Update score and show result
+    gameConfig.score += points;
+    updateScoreDisplay();
+    showResult(distance, points);
+}
+
+// Calculate distance between two coordinates
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Earth's radius in km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+}
+
     </script>
 </body>
 </html>
