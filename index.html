@@ -218,7 +218,7 @@
     <div class="container">
         <header>
             <h1>🌍 GeoGuess Game</h1>
-            <p class="subtitle">Test your geography knowledge.</p>
+            <p class="subtitle">Test your geography knowledge!</p>
         </header>
         
         <div class="game-container">
@@ -274,27 +274,37 @@
             currentLocation: null,
             userGuess: null,
             difficulty: 'medium',
+            usedLocations: [], // Track used locations
             locations: {
                 easy: [
                     { name: "Eiffel Tower", lat: 48.8584, lng: 2.2945, hint: "Iconic Parisian landmark" },
                     { name: "Statue of Liberty", lat: 40.6892, lng: -74.0445, hint: "Gift from France to the USA" },
                     { name: "Sydney Opera House", lat: -33.8568, lng: 151.2153, hint: "Famous performing arts venue in Australia" },
                     { name: "Colosseum", lat: 41.8902, lng: 12.4922, hint: "Ancient amphitheater in Rome" },
-                    { name: "Taj Mahal", lat: 27.1750, lng: 78.0419, hint: "White marble mausoleum in India" }
+                    { name: "Taj Mahal", lat: 27.1750, lng: 78.0419, hint: "White marble mausoleum in India" },
+                    { name: "Great Pyramid of Giza", lat: 29.9792, lng: 31.1342, hint: "Ancient wonder in Egypt" },
+                    { name: "Big Ben", lat: 51.5007, lng: -0.1246, hint: "Famous clock tower in London" },
+                    { name: "Mount Fuji", lat: 35.3606, lng: 138.7274, hint: "Iconic volcano in Japan" }
                 ],
                 medium: [
                     { name: "Machu Picchu", lat: -13.1631, lng: -72.5450, hint: "Ancient Incan city in Peru" },
                     { name: "Christ the Redeemer", lat: -22.9519, lng: -43.2105, hint: "Large statue in Rio de Janeiro" },
                     { name: "Petra", lat: 30.3285, lng: 35.4444, hint: "Historical city carved into rock in Jordan" },
                     { name: "Great Wall of China", lat: 40.4319, lng: 116.5704, hint: "Long wall in northern China" },
-                    { name: "Angkor Wat", lat: 13.4125, lng: 103.8670, hint: "Temple complex in Cambodia" }
+                    { name: "Angkor Wat", lat: 13.4125, lng: 103.8670, hint: "Temple complex in Cambodia" },
+                    { name: "Stonehenge", lat: 51.1789, lng: -1.8262, hint: "Prehistoric monument in England" },
+                    { name: "Santorini", lat: 36.3932, lng: 25.4615, hint: "Greek island with white buildings" },
+                    { name: "Niagara Falls", lat: 43.0799, lng: -79.0747, hint: "Famous waterfalls between US and Canada" }
                 ],
                 hard: [
                     { name: "Sagrada Familia", lat: 41.4036, lng: 2.1744, hint: "Unfinished basilica in Barcelona" },
                     { name: "Neuschwanstein Castle", lat: 47.5576, lng: 10.7498, hint: "Fairytale castle in Germany" },
                     { name: "Plitvice Lakes", lat: 44.8654, lng: 15.5820, hint: "National park with cascading lakes in Croatia" },
                     { name: "Salar de Uyuni", lat: -20.1338, lng: -67.4891, hint: "World's largest salt flat in Bolivia" },
-                    { name: "Sossusvlei", lat: -24.7369, lng: 15.2906, hint: "Salt and clay pan in Namibia" }
+                    { name: "Sossusvlei", lat: -24.7369, lng: 15.2906, hint: "Salt and clay pan in Namibia" },
+                    { name: "Zhangjiajie National Forest", lat: 29.3543, lng: 110.3121, hint: "Floating mountains in China" },
+                    { name: "Antelope Canyon", lat: 36.8619, lng: -111.3743, hint: "Slot canyon in Arizona, USA" },
+                    { name: "Pamukkale", lat: 37.9190, lng: 29.1109, hint: "Thermal pools in Turkey" }
                 ]
             }
         };
@@ -353,6 +363,7 @@
         // Set game difficulty
         function setDifficulty(difficulty) {
             gameConfig.difficulty = difficulty;
+            gameConfig.usedLocations = []; // Reset used locations
             difficultyElement.textContent = difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
             
             // Update active button
@@ -391,10 +402,23 @@
                 targetMarker = null;
             }
             
-            // Select a random location based on difficulty
+            // Get available locations (not used yet)
             const locations = gameConfig.locations[gameConfig.difficulty];
-            const randomIndex = Math.floor(Math.random() * locations.length);
-            gameConfig.currentLocation = locations[randomIndex];
+            const availableLocations = locations.filter(location => 
+                !gameConfig.usedLocations.some(used => 
+                    used.lat === location.lat && used.lng === location.lng
+                )
+            );
+            
+            // If all locations have been used, reset the used locations
+            if (availableLocations.length === 0) {
+                gameConfig.usedLocations = [];
+                // Use the full list again
+                selectRandomLocation(locations);
+            } else {
+                // Select from available locations
+                selectRandomLocation(availableLocations);
+            }
             
             // Update UI
             questionElement.textContent = `Where is ${gameConfig.currentLocation.name}?`;
@@ -402,6 +426,15 @@
             
             // Update round display
             roundElement.textContent = `${gameConfig.currentRound}/${gameConfig.totalRounds}`;
+        }
+        
+        // Helper function to select a random location
+        function selectRandomLocation(locationArray) {
+            const randomIndex = Math.floor(Math.random() * locationArray.length);
+            gameConfig.currentLocation = locationArray[randomIndex];
+            
+            // Add to used locations
+            gameConfig.usedLocations.push(gameConfig.currentLocation);
         }
         
         // Place marker on map for user's guess
@@ -519,6 +552,7 @@
         function resetGame() {
             gameConfig.currentRound = 1;
             gameConfig.score = 0;
+            gameConfig.usedLocations = []; // Clear used locations
             updateScoreDisplay();
             nextButton.textContent = 'Next Round';
             startNewRound();
