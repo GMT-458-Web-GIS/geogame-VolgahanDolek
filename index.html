@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geo-Guessing Game</title>
-
+    <title>GeoGuess Game</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         * {
@@ -24,58 +23,201 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
         
         header {
             text-align: center;
             padding: 20px;
-            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
         }
         
         h1 {
             font-size: 2.8rem;
             margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
-
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
         .game-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-}
-
-.map-container {
-    flex: 1;
-    min-width: 300px;
-    height: 500px;
-    border-radius: 15px;
-    overflow: hidden;
-}
-
-.game-panel {
-    flex: 1;
-    min-width: 300px;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 15px;
-    padding: 25px;
-}
-
-/* Add media query for mobile devices */
-@media (max-width: 768px) {
-    .game-container {
-        flex-direction: column;
-    }
-    
-    .map-container, .game-panel {
-        min-width: 100%;
-    }
-}
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .map-container {
+            flex: 1;
+            min-width: 300px;
+            height: 500px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+        
+        .game-panel {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        .score-container {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .score-item {
+            text-align: center;
+        }
+        
+        .score-value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .question-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .question {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+        }
+        
+        .hint {
+            font-style: italic;
+            opacity: 0.8;
+            margin-top: 10px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            flex: 1;
+            min-width: 120px;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background: #4a90e2;
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:hover {
+            background: #357abd;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        #guess-btn {
+            background: #2ecc71;
+        }
+        
+        #guess-btn:hover {
+            background: #27ae60;
+        }
+        
+        #next-btn {
+            background: #e74c3c;
+        }
+        
+        #next-btn:hover {
+            background: #c0392b;
+        }
+        
+        .result {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .correct {
+            background: rgba(46, 204, 113, 0.3);
+            display: block;
+        }
+        
+        .incorrect {
+            background: rgba(231, 76, 60, 0.3);
+            display: block;
+        }
+        
+        .distance-info {
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .difficulty-selector {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        
+        .difficulty-btn {
+            padding: 8px 15px;
+            font-size: 0.9rem;
+        }
+        
+        .active-difficulty {
+            background: #fdbb2d;
+            color: #1a2a6c;
+        }
+        
+        @media (max-width: 768px) {
+            .game-container {
+                flex-direction: column;
+            }
+            
+            .map-container, .game-panel {
+                min-width: 100%;
+            }
+        }
     </style>
-    
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🌍 Geo Guessing Game</h1>
+            <h1>🌍 GeoGuess Game</h1>
             <p class="subtitle">Test your geography knowledge.</p>
         </header>
         
@@ -85,16 +227,47 @@
             </div>
             
             <div class="game-panel">
-                <!-- Game controls -->
+                <div class="score-container">
+                    <div class="score-item">
+                        <div class="score-label">Score</div>
+                        <div class="score-value" id="score">0</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">Round</div>
+                        <div class="score-value" id="round">1/5</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">Difficulty</div>
+                        <div class="score-value" id="difficulty">Medium</div>
+                    </div>
+                </div>
+                
+                <div class="question-container">
+                    <div class="question" id="question">Where is this location?</div>
+                    <div class="hint" id="hint">Click on the map to make your guess</div>
+                </div>
+                
+                <div class="result" id="result"></div>
+                
+                <div class="controls">
+                    <button id="guess-btn">Make Guess</button>
+                    <button id="next-btn" disabled>Next Round</button>
+                    <button id="hint-btn">Get Hint</button>
+                </div>
+                
+                <div class="difficulty-selector">
+                    <button class="difficulty-btn active-difficulty" data-difficulty="easy">Easy</button>
+                    <button class="difficulty-btn" data-difficulty="medium">Medium</button>
+                    <button class="difficulty-btn" data-difficulty="hard">Hard</button>
+                </div>
             </div>
         </div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-
-// Game configuration
-const gameConfig = {
+        // Game configuration
+        const gameConfig = {
             currentRound: 1,
             totalRounds: 5,
             score: 0,
@@ -126,109 +299,233 @@ const gameConfig = {
             }
         };
 
-        // Initializing the map
-            const map = L.map('map').setView([20, 0], 2);
-
-        // Adding tile layer
+        // Initialize the map
+        const map = L.map('map').setView([20, 0], 2);
+        
+        // Add tile layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
-
+        
+        // Game state variables
+        let marker = null;
+        let targetMarker = null;
+        
+        // DOM elements
+        const scoreElement = document.getElementById('score');
+        const roundElement = document.getElementById('round');
+        const questionElement = document.getElementById('question');
+        const hintElement = document.getElementById('hint');
+        const resultElement = document.getElementById('result');
+        const guessButton = document.getElementById('guess-btn');
+        const nextButton = document.getElementById('next-btn');
+        const hintButton = document.getElementById('hint-btn');
+        const difficultyElement = document.getElementById('difficulty');
+        const difficultyButtons = document.querySelectorAll('.difficulty-btn');
+        
+        // Initialize game
+        function initGame() {
+            updateScoreDisplay();
+            startNewRound();
+            
+            // Add click event to map
+            map.on('click', function(e) {
+                if (gameConfig.userGuess === null) {
+                    placeMarker(e.latlng);
+                    guessButton.disabled = false;
+                }
+            });
+            
+            // Add event listeners to buttons
+            guessButton.addEventListener('click', checkGuess);
+            nextButton.addEventListener('click', startNewRound);
+            hintButton.addEventListener('click', showHint);
+            
+            // Add event listeners to difficulty buttons
+            difficultyButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const difficulty = this.getAttribute('data-difficulty');
+                    setDifficulty(difficulty);
+                });
+            });
+        }
+        
+        // Set game difficulty
+        function setDifficulty(difficulty) {
+            gameConfig.difficulty = difficulty;
+            difficultyElement.textContent = difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
+            
+            // Update active button
+            difficultyButtons.forEach(button => {
+                if (button.getAttribute('data-difficulty') === difficulty) {
+                    button.classList.add('active-difficulty');
+                } else {
+                    button.classList.remove('active-difficulty');
+                }
+            });
+            
+            // Reset game with new difficulty
+            gameConfig.currentRound = 1;
+            gameConfig.score = 0;
+            updateScoreDisplay();
+            startNewRound();
+        }
+        
         // Start a new round
-function startNewRound() {
-    // Reset round state
-    gameConfig.userGuess = null;
-    
-    // Clear markers from previous round
-    if (marker) map.removeLayer(marker);
-    if (targetMarker) map.removeLayer(targetMarker);
-    
-    // Select a random location
-    const locations = gameConfig.locations[gameConfig.difficulty];
-    const randomIndex = Math.floor(Math.random() * locations.length);
-    gameConfig.currentLocation = locations[randomIndex];
-    
-    // Update UI
-    questionElement.textContent = `Where is ${gameConfig.currentLocation.name}?`;
-}
-
-// Place marker on map for user's guess
-function placeMarker(latlng) {
-    if (marker) map.removeLayer(marker);
-    
-    marker = L.marker(latlng).addTo(map)
-        .bindPopup('Your guess')
-        .openPopup();
-    
-    gameConfig.userGuess = latlng;
-}
-
-// Check the user's guess
-function checkGuess() {
-    if (gameConfig.userGuess === null) return;
-    
-    const distance = calculateDistance(
-        gameConfig.currentLocation.lat, 
-        gameConfig.currentLocation.lng,
-        gameConfig.userGuess.lat, 
-        gameConfig.userGuess.lng
-    );
-    
-    // Calculate score based on distance
-    let points = calculateScore(distance);
-    
-    // Update score and show result
-    gameConfig.score += points;
-    updateScoreDisplay();
-    showResult(distance, points);
-}
-
-// Calculate distance between two coordinates
-function calculateDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371; // Earth's radius in km
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = 
-        Math.sin(dLat/2) * Math.sin(dLat/2) +
-        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-        Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    return R * c;
-}
-
-// Initialize game
-function initGame() {
-    updateScoreDisplay();
-    startNewRound();
-    
-    // Set up all event listeners
-    setupEventListeners();
-}
-
-// Start the game when page loads
-window.onload = initGame;
-
-// Add click event to map
-map.on('click', function(e) {
-    if (gameConfig.userGuess === null) {
-        placeMarker(e.latlng);
-        guessButton.disabled = false;
-    }
-});
-
-// Add event listeners to buttons
-guessButton.addEventListener('click', checkGuess);
-nextButton.addEventListener('click', startNewRound);
-hintButton.addEventListener('click', showHint);
-
-// Add event listeners to difficulty buttons
-difficultyButtons.forEach(button => {
-    button.addEventListener('click', function() {
-        const difficulty = this.getAttribute('data-difficulty');
-        setDifficulty(difficulty);
-    });
-});
-
+        function startNewRound() {
+            // Reset round state
+            gameConfig.userGuess = null;
+            guessButton.disabled = true;
+            nextButton.disabled = true;
+            resultElement.className = 'result';
+            resultElement.style.display = 'none';
+            
+            // Clear markers from previous round
+            if (marker) {
+                map.removeLayer(marker);
+                marker = null;
+            }
+            
+            if (targetMarker) {
+                map.removeLayer(targetMarker);
+                targetMarker = null;
+            }
+            
+            // Select a random location based on difficulty
+            const locations = gameConfig.locations[gameConfig.difficulty];
+            const randomIndex = Math.floor(Math.random() * locations.length);
+            gameConfig.currentLocation = locations[randomIndex];
+            
+            // Update UI
+            questionElement.textContent = `Where is ${gameConfig.currentLocation.name}?`;
+            hintElement.textContent = 'Click on the map to make your guess';
+            
+            // Update round display
+            roundElement.textContent = `${gameConfig.currentRound}/${gameConfig.totalRounds}`;
+        }
+        
+        // Place marker on map for user's guess
+        function placeMarker(latlng) {
+            if (marker) {
+                map.removeLayer(marker);
+            }
+            
+            marker = L.marker(latlng).addTo(map)
+                .bindPopup('Your guess')
+                .openPopup();
+            
+            gameConfig.userGuess = latlng;
+        }
+        
+        // Check the user's guess
+        function checkGuess() {
+            if (gameConfig.userGuess === null) return;
+            
+            const distance = calculateDistance(
+                gameConfig.currentLocation.lat, 
+                gameConfig.currentLocation.lng,
+                gameConfig.userGuess.lat, 
+                gameConfig.userGuess.lng
+            );
+            
+            // Show the actual location
+            targetMarker = L.marker([gameConfig.currentLocation.lat, gameConfig.currentLocation.lng])
+                .addTo(map)
+                .bindPopup(`Actual location: ${gameConfig.currentLocation.name}`)
+                .openPopup();
+            
+            // Calculate score based on distance and difficulty
+            let points = 0;
+            let maxDistance = 5000; // 5000 km maximum distance for points
+            
+            if (gameConfig.difficulty === 'easy') maxDistance = 3000;
+            if (gameConfig.difficulty === 'hard') maxDistance = 10000;
+            
+            if (distance < 50) {
+                points = 100; // Very close guess
+            } else if (distance < 500) {
+                points = 80; // Good guess
+            } else if (distance < 1500) {
+                points = 50; // Fair guess
+            } else if (distance < maxDistance) {
+                points = Math.max(10, 100 - Math.floor(distance / 50)); // Decreasing points based on distance
+            }
+            
+            // Update score
+            gameConfig.score += points;
+            updateScoreDisplay();
+            
+            // Show result
+            resultElement.innerHTML = `
+                <div>${distance < 100 ? 'Excellent!' : distance < 500 ? 'Good job!' : 'Not bad!'}</div>
+                <div class="distance-info">You were ${distance.toFixed(1)} km away</div>
+                <div class="distance-info">You earned ${points} points</div>
+            `;
+            
+            if (distance < 500) {
+                resultElement.className = 'result correct';
+            } else {
+                resultElement.className = 'result incorrect';
+            }
+            
+            resultElement.style.display = 'block';
+            
+            // Update buttons
+            guessButton.disabled = true;
+            nextButton.disabled = false;
+            
+            // Move to next round or end game
+            if (gameConfig.currentRound === gameConfig.totalRounds) {
+                nextButton.textContent = 'View Final Score';
+                nextButton.addEventListener('click', showFinalScore, { once: true });
+            }
+            
+            gameConfig.currentRound++;
+        }
+        
+        // Show hint
+        function showHint() {
+            hintElement.textContent = `Hint: ${gameConfig.currentLocation.hint}`;
+        }
+        
+        // Calculate distance between two coordinates using Haversine formula
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Earth's radius in km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = 
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+        
+        // Update score display
+        function updateScoreDisplay() {
+            scoreElement.textContent = gameConfig.score;
+        }
+        
+        // Show final score
+        function showFinalScore() {
+            questionElement.textContent = 'Game Over!';
+            hintElement.textContent = `Your final score: ${gameConfig.score} points`;
+            resultElement.style.display = 'none';
+            nextButton.textContent = 'Play Again';
+            nextButton.addEventListener('click', resetGame, { once: true });
+        }
+        
+        // Reset game
+        function resetGame() {
+            gameConfig.currentRound = 1;
+            gameConfig.score = 0;
+            updateScoreDisplay();
+            nextButton.textContent = 'Next Round';
+            startNewRound();
+        }
+        
+        // Initialize the game when the page loads
+        window.onload = initGame;
     </script>
 </body>
 </html>
