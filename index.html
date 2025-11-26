@@ -163,6 +163,27 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     return R * c;
 }
 
+// Add click event to map
+map.on('click', function(e) {
+    if (gameConfig.userGuess === null) {
+        placeMarker(e.latlng);
+        guessButton.disabled = false;
+    }
+});
+
+// Add event listeners to buttons
+guessButton.addEventListener('click', checkGuess);
+nextButton.addEventListener('click', startNewRound);
+hintButton.addEventListener('click', showHint);
+
+// Add event listeners to difficulty buttons
+difficultyButtons.forEach(button => {
+    button.addEventListener('click', function() {
+        const difficulty = this.getAttribute('data-difficulty');
+        setDifficulty(difficulty);
+    });
+});
+
     </script>
 </body>
 </html>
