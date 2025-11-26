@@ -163,6 +163,18 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     return R * c;
 }
 
+// Initialize game
+function initGame() {
+    updateScoreDisplay();
+    startNewRound();
+    
+    // Set up all event listeners
+    setupEventListeners();
+}
+
+// Start the game when page loads
+window.onload = initGame;
+
 // Add click event to map
 map.on('click', function(e) {
     if (gameConfig.userGuess === null) {
