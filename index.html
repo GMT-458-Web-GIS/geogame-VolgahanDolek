@@ -60,6 +60,39 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
 
+// Game configuration
+const gameConfig = {
+            currentRound: 1,
+            totalRounds: 5,
+            score: 0,
+            currentLocation: null,
+            userGuess: null,
+            difficulty: 'medium',
+            locations: {
+                easy: [
+                    { name: "Eiffel Tower", lat: 48.8584, lng: 2.2945, hint: "Iconic Parisian landmark" },
+                    { name: "Statue of Liberty", lat: 40.6892, lng: -74.0445, hint: "Gift from France to the USA" },
+                    { name: "Sydney Opera House", lat: -33.8568, lng: 151.2153, hint: "Famous performing arts venue in Australia" },
+                    { name: "Colosseum", lat: 41.8902, lng: 12.4922, hint: "Ancient amphitheater in Rome" },
+                    { name: "Taj Mahal", lat: 27.1750, lng: 78.0419, hint: "White marble mausoleum in India" }
+                ],
+                medium: [
+                    { name: "Machu Picchu", lat: -13.1631, lng: -72.5450, hint: "Ancient Incan city in Peru" },
+                    { name: "Christ the Redeemer", lat: -22.9519, lng: -43.2105, hint: "Large statue in Rio de Janeiro" },
+                    { name: "Petra", lat: 30.3285, lng: 35.4444, hint: "Historical city carved into rock in Jordan" },
+                    { name: "Great Wall of China", lat: 40.4319, lng: 116.5704, hint: "Long wall in northern China" },
+                    { name: "Angkor Wat", lat: 13.4125, lng: 103.8670, hint: "Temple complex in Cambodia" }
+                ],
+                hard: [
+                    { name: "Sagrada Familia", lat: 41.4036, lng: 2.1744, hint: "Unfinished basilica in Barcelona" },
+                    { name: "Neuschwanstein Castle", lat: 47.5576, lng: 10.7498, hint: "Fairytale castle in Germany" },
+                    { name: "Plitvice Lakes", lat: 44.8654, lng: 15.5820, hint: "National park with cascading lakes in Croatia" },
+                    { name: "Salar de Uyuni", lat: -20.1338, lng: -67.4891, hint: "World's largest salt flat in Bolivia" },
+                    { name: "Sossusvlei", lat: -24.7369, lng: 15.2906, hint: "Salt and clay pan in Namibia" }
+                ]
+            }
+        };
+
         // Initializing the map
             const map = L.map('map').setView([20, 0], 2);
 
