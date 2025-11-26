@@ -36,6 +36,39 @@
             font-size: 2.8rem;
             margin-bottom: 10px;
         }
+
+        .game-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.map-container {
+    flex: 1;
+    min-width: 300px;
+    height: 500px;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.game-panel {
+    flex: 1;
+    min-width: 300px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    padding: 25px;
+}
+
+/* Add media query for mobile devices */
+@media (max-width: 768px) {
+    .game-container {
+        flex-direction: column;
+    }
+    
+    .map-container, .game-panel {
+        min-width: 100%;
+    }
+}
     </style>
     
 </head>
